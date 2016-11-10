@@ -21,11 +21,8 @@ func main() {
 		},
 	}
 
-	token, err := loadToken()
-	if err != nil || *token == (oauth2.Token{}) {
-		token = fetchToken(conf)
-		saveToken(token)
-	}
+	token := fetchToken(conf)
+	saveToken(token)
 	_ = conf.Client(oauth2.NoContext, token)
 }
 
@@ -41,7 +38,7 @@ func saveToken(token *oauth2.Token) {
 	log.Print(string(b))
 }
 
-func fetchToken(conf *oauth2.Config) (*oauth2.Token) {
+func fetchToken(conf *oauth2.Config) *oauth2.Token {
 	state := "ideallygenerated"
 
 	showDialogOption := oauth2.SetAuthURLParam("show_dialog", "false")
@@ -66,7 +63,7 @@ func fetchToken(conf *oauth2.Config) (*oauth2.Token) {
 func loadToken() (token *oauth2.Token, err error) {
 	b, err := ioutil.ReadFile("tokens.json")
 	if err != nil {
-    return token, err
+		return token, err
 	}
 
 	err = json.Unmarshal(b, &token)
